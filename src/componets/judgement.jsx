@@ -9,22 +9,29 @@ function Judgement({ pitch, setIsJudged, setPitch }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const handleSubmit = async () => {
-    const response = await responeGen(pitch);
-    setRating(
-      response.split("## Idea Rating:")[1].split("**Judgment:**")[0].trim()
-    );
-    setJudgement(
-      response
-        .split("**Judgment:")[1]
-        .split("**Comment:**")[0]
-        .trim()
-        .split("**")[1]
-    );
-    setComment(response.split("**Comment:")[1].trim().split("**")[1]);
+    try {
+      const response = await responeGen(pitch);
+      setRating(
+        response.split("## Idea Rating:")[1].split("**Judgment:**")[0].trim()
+      );
+      setJudgement(
+        response
+          .split("**Judgment:")[1]
+          .split("**Comment:**")[0]
+          .trim()
+          .split("**")[1]
+      );
+      setComment(response.split("**Comment:")[1].trim().split("**")[1]);
+    } catch (e) {
+      setComment("");
+      setJudgement("please provide a valid entry");
+      setRating('N/A');
+    };
 
-    setTimeout(()=>{
-        setIsLoading(false);
-    },1000)
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000)
   };
 
   const genAI = new GoogleGenerativeAI(
@@ -63,7 +70,7 @@ function Judgement({ pitch, setIsJudged, setPitch }) {
   return (
     <>
       {isLoading ? (
-        <img src={loading} alt="loading" className="loading"/>
+        <img src={loading} alt="loading" className="loading" />
       ) : (
         <>
           <div className="rating">{rating}</div>
